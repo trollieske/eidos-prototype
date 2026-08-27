@@ -97,6 +97,16 @@ h1, h2, h3 { line-height: 1.2; }
 .hero-media { position:absolute; inset:0; z-index:0; }
 .hero-media picture, .hero-media img { display:block; }
 .hero-media img { width:100%; height:100%; object-fit:cover; opacity:0.42; }
+
+/* Ken-Burns på hero (kun desktop, subtilt; gir levende 'video'-følelse uten tung video) */
+@media (min-width:1024px){
+  @keyframes heroZoom {
+    0% { transform: scale(1.0) translateY(0); }
+    100% { transform: scale(1.08) translateY(-1.5%); }
+  }
+  .hero-media img { opacity:0.45; will-change:transform; animation: heroZoom 22s ease-in-out infinite alternate; }
+  @media (prefers-reduced-motion: reduce){ .hero-media img { animation:none; } }
+}
 .hero-content { position:relative; z-index:2; width:100%; padding:clamp(3rem,8vh,5rem) clamp(1.25rem,5vw,2.5rem) clamp(2rem,6vh,3.5rem); }
 .hero h1 { margin:0 0 0.6rem; font-size:clamp(1.8rem,6.5vw,3.1rem); font-weight:800; color:#fff; line-height:1.15; text-wrap:balance; }
 .hero p.tagline { margin:0 0 1.6rem; font-size:clamp(1.1rem,3.8vw,1.5rem); color:#fff; font-weight:600; letter-spacing:0.02em; }
@@ -267,6 +277,13 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
   /* Hero: redusert innvendig topp-pad, mer luft til underinnhold for balanse */
   .hero-content { padding-top: clamp(3rem, 7vh, 4.5rem); }
 
+  /* Spesialist: layout som en statement-seksjon — kicker + grønn linje + stor tekst */
+  .specialist-wrap { display: grid; grid-template-columns: minmax(0, 300px) 1fr; column-gap: clamp(2rem, 5vw, 5rem); align-items: start; }
+  .specialist-marker { display: flex; flex-direction: column; gap: 0.9rem; }
+  .specialist-marker .kicker { margin-bottom: 0.2rem; }
+  .specialist-line { display: block; width: 56px; height: 3px; border-radius: 2px; background: var(--green); }
+  .specialist-text { font-size: clamp(1.25rem, 1.9vw, 1.65rem); max-width: 30ch; line-height: 1.7; color: var(--ink); }
+
   /* Kort-høyde jevnet, tekstkortet får grønn/navy behandling så det ikke ser tomt ut */
   .static-card {
     background: linear-gradient(165deg, var(--navy) 0%, #1c3a54 70%, #27475f 100%);
@@ -368,9 +385,12 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
 
   <!-- ============ SPESIALIST PÅ NÆRINGSEIENDOM — 1:1 fra forsiden ============ -->
   <section class="container" id="spesialist">
-    <div class="section-head">
-      <p class="kicker">Spesialist på næringseiendom</p>
-      <p class="section-sub">Eidos er den største grunneieren på Lierstranda. Selskapet eier og forvalter 528.000 kvadratmeter mot Drammensfjorden. Vi driver innenfor næringseiendom. Drift, forvaltning og utleie er kjernevirksomhet. I tillegg jobber vi med den kommende forvandlingen fra lager og logistikk til en ny by.</p>
+    <div class="specialist-wrap">
+      <div class="specialist-marker">
+        <p class="kicker">Spesialist på næringseiendom</p>
+        <span class="specialist-line"></span>
+      </div>
+      <p class="section-sub specialist-text">Eidos er den største grunneieren på Lierstranda. Selskapet eier og forvalter 528.000 kvadratmeter mot Drammensfjorden. Vi driver innenfor næringseiendom. Drift, forvaltning og utleie er kjernevirksomhet. I tillegg jobber vi med den kommende forvandlingen fra lager og logistikk til en ny by.</p>
     </div>
   </section>
 
@@ -682,15 +702,40 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
   window.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeLb(); });
 })();
 
-/* ============ SCROLL-REVEAL (IntersectionObserver — subtil) ============ */
+/* ============ SCROLL-REVEAL (robust: re-observerer dynamiske nye elementer) ============ */
 (function () {
-  var els = document.querySelectorAll('.reveal');
-  if (!('IntersectionObserver' in window) || !els.length) { els.forEach(function (e){ e.classList.add('in-view'); }); return; }
+  if (!('IntersectionObserver' in window)) {
+    document.querySelectorAll('.reveal').forEach(function (e){ e.classList.add('in-view'); });
+    return;
+  }
   var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in-view'); io.unobserve(en.target); } });
-  }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
-  els.forEach(function (e) { io.observe(e); });
+    entries.forEach(function (en) {
+      if (en.isIntersecting) { en.target.classList.add('in-view'); io.unobserve(en.target); }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -4% 0px' });
+
+  function scan() {
+    document.querySelectorAll('.reveal:not(.in-view)').forEach(function (e) {
+      var r = e.getBoundingClientRect();
+      if (r.top < window.innerHeight * 1.02 && r.bottom > 0) {
+        e.classList.add('in-view');
+      } else {
+        io.observe(e);
+      }
+    });
+  }
+
+  var mo = ('MutationObserver' in window) ? new MutationObserver(function () { scan(); }) : null;
+  scan();
+  if (mo) mo.observe(document.body, { childList: true, subtree: true });
+
+  var t = null;
+  window.addEventListener('scroll', function () {
+    if (t) clearTimeout(t);
+    t = setTimeout(scan, 150);
+  }, { passive: true });
 })();
+
 
 (function () {
   var chips = document.querySelectorAll('.filter.chip');
