@@ -101,6 +101,30 @@ h1, h2, h3 { line-height: 1.2; }
 .hero h1 { margin:0 0 0.6rem; font-size:clamp(1.8rem,6.5vw,3.1rem); font-weight:800; color:#fff; line-height:1.15; text-wrap:balance; }
 .hero p.tagline { margin:0 0 1.6rem; font-size:clamp(1.1rem,3.8vw,1.5rem); color:#fff; font-weight:600; letter-spacing:0.02em; }
 
+/* ============ STATISTIKK-BANE ============ */
+.stats-band { width:100%; background:var(--navy); color:#fff; position:relative; overflow:clip; }
+.stats-band::before { content:''; position:absolute; inset:0; background:radial-gradient(80% 60% at 80% 20%, rgba(149,193,31,0.14), transparent 60%); }
+.stats-inner { width:100%; max-width:1200px; margin-inline:auto; padding:clamp(2rem,6vw,3.5rem) clamp(1.25rem,5vw,2.5rem); display:grid; gap:1.6rem; grid-template-columns:repeat(2,minmax(0,1fr)); position:relative; }
+.stat { text-align:center; }
+.stat .num { font-size:clamp(2rem,7vw,3.2rem); font-weight:800; color:var(--green); line-height:1; }
+.stat .lbl { margin-top:0.45rem; font-size:0.82rem; color:#b9c9d6; text-transform:uppercase; letter-spacing:0.08em; }
+@media (min-width:768px){ .stats-inner { grid-template-columns:repeat(4,minmax(0,1fr)); } }
+
+/* ============ LYSBOKS / VIDEO ============ */
+.lightbox { position:fixed; inset:0; z-index:100; display:grid; place-items:center; padding:1.25rem; background:rgba(8,23,38,0.94); opacity:0; visibility:hidden; transition:opacity .3s ease,visibility .3s; }
+.lightbox.open { opacity:1; visibility:visible; }
+.lightbox-inner { position:relative; width:100%; max-width:980px; aspect-ratio:16/9; border-radius:14px; overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,0.5); transform:scale(0.94); transition:transform .3s ease; }
+.lightbox.open .lightbox-inner { transform:scale(1); }
+.lightbox iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+.lightbox .close { position:absolute; top:-50px; right:0; width:44px; height:44px; border-radius:50%; border:none; background:#fff; color:var(--navy); font-size:1.4rem; cursor:pointer; display:grid; place-items:center; line-height:1; }
+.lightbox .close:hover { background:var(--green); color:var(--navy); }
+
+/* ============ SCROLL-REVEAL (subtile animasjoner) ============ */
+.reveal { opacity:0; transform:translateY(22px); transition:opacity .6s ease,transform .6s cubic-bezier(.22,1,.36,1); }
+.reveal.in-view { opacity:1; transform:none; }
+.reveal-d1 { transition-delay:.08s; } .reveal-d2 { transition-delay:.16s; } .reveal-d3 { transition-delay:.24s; }
+@media (prefers-reduced-motion: reduce){ .reveal { opacity:1; transform:none; transition:none; } }
+
 .btn { display:inline-flex; align-items:center; justify-content:center; gap:0.5rem; min-height:52px; padding:0.85rem 1.4rem; border-radius:12px; font-weight:700; font-size:1rem; border:none; cursor:pointer; transition:transform .1s,background .15s; }
 .btn:active { transform:translateY(1px) scale(0.99); }
 .btn-primary { background:var(--green); color:#0c1f33; }
@@ -141,6 +165,13 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
 .property-meta .m2 { font-weight:800; color:var(--green-dark); }
 .property-desc { font-size:0.92rem; color:var(--muted); margin:0; }
 .property-card .btn { margin-top:auto; width:100%; }
+.property-card { transition:transform .28s ease,box-shadow .28s ease; }
+.property-card:hover { transform:translateY(-6px); box-shadow:0 20px 44px rgba(12,31,51,0.16); }
+.property-card .preview { overflow:hidden; }
+.property-card .preview img { transition:transform .6s cubic-bezier(.22,1,.36,1); }
+.property-card:hover .preview img { transform:scale(1.05); }
+.card { transition:transform .28s ease,box-shadow .28s ease,border-color .28s ease; }
+.card:hover { transform:translateY(-4px); box-shadow:0 18px 40px rgba(12,31,51,0.14); border-color:#cfe0f0; }
 
 /* ============ NEWS / MOT OSS (eierne) ============ */
 .news-list { display:grid; gap:1.2rem; grid-template-columns:1fr; }
@@ -179,6 +210,18 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
 .site-footer .legal { border-top:1px solid rgba(255,255,255,0.12); margin-top:2rem; padding-top:1.4rem; font-size:0.82rem; color:#84a0ad; }
 .site-footer .legal p { margin:0.2rem 0; }
 
+/* ============ DESKTOP-MENY (vises ≥1024px) ============ */
+.desktop-nav { display:none; }
+@media (min-width:1024px){
+  .desktop-nav { display:block; }
+  .desktop-nav .nav-list { display:flex; align-items:center; gap:clamp(1rem,2vw,2.2rem); list-style:none; margin:0; padding:0; }
+  .desktop-nav a { position:relative; font-weight:600; font-size:0.98rem; color:var(--ink); padding:0.6rem 0; white-space:nowrap; }
+  .desktop-nav a::after { content:''; position:absolute; left:0; bottom:0; width:0; height:2.5px; background:var(--green); border-radius:2px; transition:width .25s ease; }
+  .desktop-nav a:hover { color:var(--navy); }
+  .desktop-nav a:hover::after { width:100%; }
+  .burger { display:none; }
+}
+
 /* ============ TABLET (768px) ============ */
 @media (min-width:768px){
   .grid-showcase { grid-template-columns:repeat(3,minmax(0,1fr)); }
@@ -187,9 +230,10 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
 }
 /* ============ DESKTOP (1200px+) ============ */
 @media (min-width:1200px){
-  .hero { min-height:84vh; }
+  .hero { min-height:88vh; }
   .property-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
   .values { grid-template-columns:repeat(5,minmax(0,1fr)); }
+  .lightbox-inner { max-width:1100px; }
 }
 </style>
 </head>
@@ -201,6 +245,15 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
     <a class="brand" href="#top" aria-label="Eidos Eiendomsutvikling — hjem">
       <img class="logo" src="assets/eidos-logo.svg" alt="Eidos Eiendomsutvikling" width="371" height="139">
     </a>
+    <!-- Desktop-markørmeny (≥1024px) -->
+    <nav class="desktop-nav" aria-label="Hovednavigasjon (desktop)">
+      <ul class="nav-list">
+        <li><a href="#ledig-lokale">Ledig lokale</a></li>
+        <li><a href="#fjordbyen">Fjordbyen</a></li>
+        <li><a href="#om-eidos">Om Eidos</a></li>
+        <li><a href="#kontakt">Kontakt</a></li>
+      </ul>
+    </nav>
     <button class="burger" id="burgerBtn" aria-label="Åpne meny" aria-controls="fullMenu" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
@@ -233,13 +286,23 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
       <p class="tagline">forvalter og utvikler eiendom</p>
       <div class="hero-cta-row">
         <a href="#ledig-lokale" class="btn btn-primary">Se ledige lokaler</a>
-        <a href="#fjordbyen" class="btn btn-ghost">Se filmen om Fjordbyen</a>
+        <a href="#fjordbyen" class="btn btn-ghost" data-video="https://www.youtube.com/embed/N-lJDVlRCMw?autoplay=1&amp;rel=0">Se filmen om Fjordbyen</a>
       </div>
     </div>
   </section>
 
+  <!-- ============ STATISTIKK-BANE (ekte tall fra eidos.no) ============ -->
+  <section class="stats-band" aria-label="Nøkkeltall">
+    <div class="stats-inner">
+      <div class="stat"><div class="num">528&nbsp;000</div><div class="lbl">m² næringsareal</div></div>
+      <div class="stat"><div class="num">16&nbsp;000</div><div class="lbl">nye beboere</div></div>
+      <div class="stat"><div class="num">8&nbsp;000</div><div class="lbl">nye boliger</div></div>
+      <div class="stat"><div class="num">50&nbsp;+</div><div class="lbl">år med utvikling</div></div>
+    </div>
+  </section>
+
   <!-- ============ SPESIALIST PÅ NÆRINGSEIENDOM — 1:1 fra forsiden ============ -->
-  <section class="container" id="spesialist">
+  <section class="container reveal" id="spesialist">
     <div class="section-head">
       <p class="kicker">Spesialist på næringseiendom</p>
       <p class="section-sub">Eidos er den største grunneieren på Lierstranda. Selskapet eier og forvalter 528.000 kvadratmeter mot Drammensfjorden. Vi driver innenfor næringseiendom. Drift, forvaltning og utleie er kjernevirksomhet. I tillegg jobber vi med den kommende forvandlingen fra lager og logistikk til en ny by.</p>
@@ -248,21 +311,21 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
 
   <!-- ============ FJORDBYEN showcase — 1:1 tekst ============ -->
   <section id="fjordbyen" class="container">
-    <div class="section-head">
+    <div class="section-head reveal">
       <p class="kicker">Fjordbyen Lier og Drammen</p>
       <h2 class="section-title">Der folk, fjord og fremtid møtes</h2>
       <p class="section-sub">Fjordbyen. Der folk, fjord og fremtid møtes – er visjonen for fjordbyen og samarbeidet mellom Lier og Drammen. Nabokommunene Lier og Drammen jobber sammen for at fjordbyen på Lierstranda og Brakerøya blir et knutepunkt med miljø, kunnskap og utvikling i fokus.</p>
     </div>
     <div class="grid-showcase">
 
-      <article class="card">
+      <article class="card reveal">
         <div class="preview">
           <picture>
             <source type="image/avif" srcset="assets/skyline-480.avif 480w, assets/skyline-768.avif 768w, assets/skyline-1280.avif 1280w, assets/skyline-1600.avif 1600w" sizes="(min-width:768px) 33vw, 100vw">
             <source type="image/webp" srcset="assets/skyline-480.webp 480w, assets/skyline-768.webp 768w, assets/skyline-1280.webp 1280w, assets/skyline-1600.webp 1600w" sizes="(min-width:768px) 33vw, 100vw">
             <img src="assets/skyline-768.webp" alt="Illustrasjon av Fjordbyen-skyline" width="1600" height="900" loading="lazy">
           </picture>
-          <span class="play" role="button" aria-label="Lierstranda med frampek — spill av film">
+          <span class="play" data-video="https://www.youtube.com/embed/N-lJDVlRCMw?autoplay=1&amp;rel=0" role="button" aria-label="Spill av filmen om Fjordbyen">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
           </span>
         </div>
@@ -272,7 +335,7 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
         </div>
       </article>
 
-      <article class="card">
+      <article class="card reveal">
         <div class="preview">
           <picture>
             <source type="image/avif" srcset="assets/webcam-480.avif 480w, assets/webcam-768.avif 768w, assets/webcam-1280.avif 1280w" sizes="(min-width:768px) 33vw, 100vw">
@@ -350,7 +413,7 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
       </article>
 
       <!-- Tømmerterminalen — 1:1 fra Våre eiendommer -->
-      <article class="property-card card" data-type="eiendom">
+      <article class="property-card card reveal reveal-d2" data-type="eiendom">
         <div class="preview">
           <picture>
             <source type="image/webp" srcset="assets/propcard-450.webp 450w" sizes="(min-width:768px) 33vw, 100vw">
@@ -370,7 +433,7 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
 
   <!-- ============ OM EIDOS — 1:1 fra Om Eidos ============ -->
   <section id="om-eidos" class="container">
-    <div class="section-head">
+    <div class="section-head reveal">
       <p class="kicker">Om Eidos</p>
       <h2 class="section-title">Om Eidos</h2>
       <p class="section-sub">Eidos Eiendomsutvikling har utviklet Lierstranda gjennom mer enn 50 år og er den største grunneieren på området. Eidos eier og forvalter 528.000 kvadratmeter mot Drammensfjorden. Vi har etablert nytt land og tilrettelagt for næring og arbeidsplasser i mange tiår. I dag er mange av leietakerne innenfor logistikk. På Lierstranda lagres en betydelig andel av bilene som importeres. Også landets viktigste tømmerhavn holder til på området.</p>
@@ -408,7 +471,7 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
 
   <!-- ============ KONTAKT — 1:1 fra Kontakt oss ============ -->
   <section id="kontakt" class="container contact-shell">
-    <div class="section-head">
+    <div class="section-head reveal">
       <p class="kicker">Kontakt oss</p>
       <h2 class="section-title">EIDOS EIENDOMSUTVIKLING AS</h2>
       <p class="section-sub">Besøks- og postadresse: Terminalen 4, 3414 Lierstranda · post@eidos.no · Org. nr.: 830 078 312</p>
@@ -459,6 +522,14 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
   </section>
 </main>
 
+<!-- ============ LYSBOKS / VIDEO — ekte Fjordbyen-film (YouTube) ============ -->
+<div class="lightbox" id="videoLightbox" role="dialog" aria-modal="true" aria-label="Film om Fjordbyen">
+  <div class="lightbox-inner">
+    <button class="close" id="lbClose" aria-label="Lukk video">×</button>
+    <iframe id="videoFrame" title="Slik blir Fjordbyen Lier og Drammen" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+  </div>
+</div>
+
 <!-- ============ FOOTER — 1:1 ============ -->
 <footer class="site-footer">
   <div class="container">
@@ -490,6 +561,7 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
 </footer>
 
 <script>
+/* ============ MENU (mobil) ============ */
 (function () {
   var burger = document.getElementById('burgerBtn');
   var menu = document.getElementById('fullMenu');
@@ -503,6 +575,41 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
   links.forEach(function (l) { l.addEventListener('click', function () { setMenu(false); }); });
   window.addEventListener('keydown', function (e) { if (e.key === 'Escape') setMenu(false); });
   document.getElementById('year').textContent = new Date().getFullYear();
+})();
+
+/* ============ VIDEO-LYSBOKS (ekte Fjordbyen-film) ============ */
+(function () {
+  var lb = document.getElementById('videoLightbox');
+  var frame = document.getElementById('videoFrame');
+  var close = document.getElementById('lbClose');
+  var triggers = document.querySelectorAll('.play[data-video], .btn[data-video]');
+  if (!lb || !frame) return;
+  function open(src) {
+    frame.src = src;
+    lb.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLb() {
+    frame.src = '';      /* stopp avspilling */
+    lb.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  triggers.forEach(function (t) {
+    t.addEventListener('click', function (e) { e.preventDefault(); open(t.getAttribute('data-video')); });
+  });
+  close.addEventListener('click', closeLb);
+  lb.addEventListener('click', function (e) { if (e.target === lb) closeLb(); });
+  window.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeLb(); });
+})();
+
+/* ============ SCROLL-REVEAL (IntersectionObserver — subtil) ============ */
+(function () {
+  var els = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window) || !els.length) { els.forEach(function (e){ e.classList.add('in-view'); }); return; }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in-view'); io.unobserve(en.target); } });
+  }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+  els.forEach(function (e) { io.observe(e); });
 })();
 
 (function () {
