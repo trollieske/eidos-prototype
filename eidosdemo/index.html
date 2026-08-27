@@ -430,6 +430,18 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
     </div>
   </section>
 
+  <!-- ============ AKTUELT / NYHETER — drevet av CMS-demo (kan redigeres i /admin) ============ -->
+  <section id="aktuelt" class="container">
+    <div class="section-head reveal">
+      <p class="kicker">Aktuelt</p>
+      <h2 class="section-title">Nyheter fra Eidos</h2>
+      <p class="section-sub">Siste nytt fra Fjordbyen og Lierstranda. Denne seksjonen administreres via kontenetts-løsningen.</p>
+    </div>
+    <div class="news-list" id="newsList">
+      <!-- Nyheter injiseres her dynamisk fra CMS /admin -->
+    </div>
+  </section>
+
   <!-- ============ LEDIG LOKALE / EIENDOMMER — 1:1 fra Lierstranda 23 og Våre eiendommer ============ -->
   <section id="ledig-lokale" class="container">
     <div class="section-head">
@@ -709,6 +721,35 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
     status.textContent = 'Takk, ' + (name || 'din henvendelse') + ' — meldingen er rutet til "' + intent + '". Vi svarer raskt.';
     form.reset();
   });
+})();
+
+/* ============ NYHETER — fasvoks fra CMS-API (admin), med fallback ============ */
+(function () {
+  var list = document.getElementById('newsList');
+  if (!list) return;
+  var defaults = [
+    { cat:'Fjordbyen', date:'21. august 2026',
+      title:'Eidos rigger 880 parkeringsplasser for det nye sykehuset',
+      text:'880 parkeringsplasser er satt opp på Lierstranda for det nye sykehuset på Brakerøya. Plassene er midlertidige – de erstattes av permanent løsning om få år.' },
+    { cat:'Fjordbyen', date:'14. august 2026',
+      title:'Områdplanen kan bli endelig vedtatt før sommeren 2027',
+      text:'Utviklingen av Fjordbyen fortsetter. Siste fremdriftsplan til Lier kommune viser at områdeplanen kan bli endelig ved vedtatt før sommeren 2027.' },
+    { cat:'Eiendeler', date:'03. august 2026',
+      title:'Eidos kan bygge 510.000 kvm av Fjordbyens 940.000 kvm',
+      text:'Med mer enn 50 års erfaring og 528.000 m² på Lierstrandra er Eidos best posisjonert til å gjøre Lierstrandra urban og bærekraftig.' }
+  ];
+  function render(items) {
+    list.innerHTML = items.map(function (it, i) {
+      var cls = 'reveal' + (i ? ' reveal-d' + (i+1) : '');
+      return '<article class="news-card ' + cls + '">' +
+        '<span class="date">' + (it.cat ? it.cat : '') + '</span>' +
+        '<h3>' + (it.title || '') + '</h3>' +
+        '<p>' + (it.text || '') + '</p></article>';
+    }).join('');
+  }
+  fetch('api/news').then(function (r) { return r.json(); }).then(function (d) {
+    if (d && d.news && d.news.length) render(d.news); else render(defaults);
+  }).catch(function () { render(defaults); });
 })();
 </script>
 </body>
