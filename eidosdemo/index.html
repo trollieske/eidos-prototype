@@ -40,7 +40,7 @@
 <style>
 /* =============== RESET / VINDELØSNING =============== */
 *, *::before, *::after { box-sizing: border-box; }
-html { overflow-x: clip; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; overscroll-behavior-y:none; }
+html { overflow-x: clip; scroll-behavior: auto; -webkit-text-size-adjust: 100%; overscroll-behavior-y:none; }
 body {
   overflow-x: clip; margin: 0; min-width: 320px;
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -700,6 +700,19 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
 </footer>
 
 <script>
+/* ============ Åpne alltid på toppen (fjern hash-anker fra tidligere klikk) ============ */
+(function () {
+  if (window.location.hash) {
+    // Fjern hash uten å trigge scroll-hendelse/navigering
+    history.replaceState(null, '', window.location.pathname + window.location.search);
+    // Sikre at viewport uansett starter øverst
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
+  } else if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+  }
+})();
+
 /* ============ MENU (mobil) ============ */
 (function () {
   var burger = document.getElementById('burgerBtn');
