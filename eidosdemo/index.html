@@ -101,13 +101,16 @@ h1, h2, h3 { line-height: 1.2; }
 }
 .hero-media { position:absolute; inset:0; z-index:0; }
 .hero-media picture, .hero-media img { display:block; }
-.hero-media img { width:100%; height:100%; object-fit:cover; opacity:0.42; }
+/* Fallback-bilde er skjult når videoen spiller; vises kun om video feiler (.hero.no-video) */
+.hero-media picture { width:100%; height:100%; }
+.hero-media img { width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .5s ease; }
+.hero.no-video .hero-media img { opacity:0.55; }
 /* Slow-mo-film-bakgrunn: dekker hele hero, uten kontroller/UI */
 .hero-youtube { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; overflow:hidden; }
 .hero-film {
   position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
   min-width:100%; min-height:100%; width:100%; height:100%; object-fit:cover;
-  opacity:0.62;
+  opacity:0.85;
   filter:saturate(1.05);
 }
 /* Når videoen spiller, skjul bilde-fallbacken; ellers vis bildet */
@@ -115,9 +118,9 @@ h1, h2, h3 { line-height: 1.2; }
 .hero-youtube { z-index:1; }
 
 /* Ken-Burns fjernet — video-hero brukes i stedet */
-.hero-content { position:relative; z-index:2; width:100%; padding:clamp(3rem,8vh,5rem) clamp(1.25rem,5vw,2.5rem) clamp(2rem,6vh,3.5rem); }
-.hero h1 { margin:0 0 0.6rem; font-size:clamp(2rem,7vw,3.4rem); font-weight:800; color:#fff; line-height:1.1; text-wrap:balance; text-shadow:0 2px 30px rgba(7,18,30,0.5); }
-.hero p.tagline { margin:0 0 1.8rem; font-size:clamp(1.05rem,3.4vw,1.4rem); color:#e3eef5; font-weight:500; letter-spacing:0.005em; text-shadow:0 1px 20px rgba(7,18,30,0.5); max-width:26ch; }
+.hero-content { position:relative; z-index:2; width:100%; max-width:1200px; margin-inline:auto; padding:clamp(3rem,8vh,5rem) clamp(1.25rem,5vw,2.5rem) clamp(2rem,6vh,3.5rem); }
+.hero h1 { margin:0 0 0.6rem; max-width:100%; font-size:clamp(1.5rem, 6vw, 3.2rem); font-weight:800; color:#fff; line-height:1.12; text-wrap:balance; text-shadow:0 2px 30px rgba(7,18,30,0.5); overflow-wrap:break-word; }
+.hero p.tagline { margin:0 0 1.8rem; max-width:100%; font-size:clamp(1rem,3.2vw,1.4rem); color:#e3eef5; font-weight:500; letter-spacing:0.005em; text-shadow:0 1px 20px rgba(7,18,30,0.5); }
 /* Myk, én-gang fade-in for hero-teksten (skjer ikke på nytt ved scroll) */
 .hero-content { animation:heroIn 1.1s ease-out both; }
 @keyframes heroIn { from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:none;} }
@@ -697,6 +700,22 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
   links.forEach(function (l) { l.addEventListener('click', function () { setMenu(false); }); });
   window.addEventListener('keydown', function (e) { if (e.key === 'Escape') setMenu(false); });
   document.getElementById('year').textContent = new Date().getFullYear();
+})();
+
+/* ============ HERO-FILM: fallback-bilde dersom video ikke kan spille ============ */
+(function () {
+  var v = document.getElementById('heroFilm');
+  if (!v) return;
+  var hero = v.closest('.hero');
+  function useImage() { hero.classList.add('no-video'); }
+  v.addEventListener('error', useImage);
+  v.addEventListener('loadeddata', function () {
+    // hvis autoplay er blokkert (mobil med data-sparing), vis bilde som rolig bakgrunn
+    setTimeout(function () { if (v.paused) useImage(); }, 2500);
+  });
+  setTimeout(function () {
+    if (v.readyState === 0) useImage();
+  }, 3000);
 })();
 
 /* ============ VIDEO-LYSBOKS (ekte Fjordbyen-film) ============ */
