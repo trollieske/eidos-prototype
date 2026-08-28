@@ -378,7 +378,7 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
         <video id="heroFilm" class="hero-film" autoplay muted loop playsinline
           poster="assets/hero-slo-poster2.jpg"
           preload="metadata" tabindex="-1">
-          <source src="assets/hero_slo_mobile_v2.webm" type="video/webm" media="(max-width:767px)">
+          <source src="assets/hero_slo_mobile_v3.webm" type="video/webm" media="(max-width:767px)">
           <source src="assets/hero_slo_hd_v2.webm" type="video/webm">
           <source src="assets/hero_slo_hd_v2.mp4" type="video/mp4">
         </video>
@@ -403,10 +403,10 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
   <!-- ============ STATISTIKK-BANE (ekte tall fra eidos.no) ============ -->
   <section class="stats-band" aria-label="Nøkkeltall">
     <div class="stats-inner">
-      <div class="stat"><div class="num">528&nbsp;000</div><div class="lbl">m² næringsareal</div></div>
-      <div class="stat"><div class="num">16&nbsp;000</div><div class="lbl">nye beboere</div></div>
-      <div class="stat"><div class="num">8&nbsp;000</div><div class="lbl">nye boliger</div></div>
-      <div class="stat"><div class="num">50&nbsp;+</div><div class="lbl">år med utvikling</div></div>
+      <div class="stat"><div class="num" data-count="528000">528&nbsp;000</div><div class="lbl">m² næringsareal</div></div>
+      <div class="stat"><div class="num" data-count="16000">16&nbsp;000</div><div class="lbl">nye beboere</div></div>
+      <div class="stat"><div class="num" data-count="8000">8&nbsp;000</div><div class="lbl">nye boliger</div></div>
+      <div class="stat"><div class="num" data-count="50" data-suffix="+">50&nbsp;+</div><div class="lbl">år med utvikling</div></div>
     </div>
   </section>
 
@@ -718,6 +718,56 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
   setTimeout(function () {
     if (v.readyState === 0) useImage();
   }, 3000);
+})();
+
+/* ============ STATISTIKK: smooth opptelling når tallene kommer i sikte ============ */
+(function () {
+  var nums = document.querySelectorAll('.stats-band .num[data-count]');
+  if (!nums.length) return;
+  var band = document.querySelector('.stats-band');
+  if (!band) return;
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function fmt(n) {
+    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0');
+  }
+  function run() {
+    var items = Array.prototype.map.call(nums, function (el) {
+      return { el: el, target: parseInt(el.getAttribute('data-count'), 10) || 0, suffix: el.getAttribute('data-suffix') || '' };
+    });
+    var dur = 1800; // ms
+    var t0 = null;
+    function tick(ts) {
+      if (!t0) t0 = ts;
+      var p = Math.min((ts - t0) / dur, 1);
+      var ease = 1 - Math.pow(1 - p, 4); // easeOutQuart — myk, rolig avslutning
+      items.forEach(function (it) {
+        var v = Math.round(it.target * ease);
+        it.el.textContent = fmt(v) + it.suffix;
+      });
+      if (p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+  if (reduced) {
+    // Vis sluttverdier direkte for brukere med redusert bevegelse
+    Array.prototype.forEach.call(nums, function (el) {
+      el.textContent = fmt(parseInt(el.getAttribute('data-count'), 10) || 0) + (el.getAttribute('data-suffix') || '');
+    });
+    return;
+  }
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) {
+          run();
+          io.disconnect();
+        }
+      });
+    }, { threshold: 0.4 });
+    io.observe(band);
+  } else {
+    run();
+  }
 })();
 
 /* ============ VIDEO-LYSBOKS (ekte Fjordbyen-film) ============ */
