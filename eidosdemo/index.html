@@ -40,7 +40,7 @@
 <style>
 /* =============== RESET / VINDELØSNING =============== */
 *, *::before, *::after { box-sizing: border-box; }
-html { overflow-x: clip; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html { overflow-x: clip; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; overscroll-behavior-y:none; }
 body {
   overflow-x: clip; margin: 0; min-width: 320px;
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -91,8 +91,8 @@ h1, h2, h3 { line-height: 1.2; }
 .full-menu a .arrow { color:var(--green); font-size:1.1em; }
 .full-menu a:hover { color:var(--green); }
 
-/* ============ HERO ============ */
-.hero { position:relative; width:100%; overflow:clip; color:#fff; min-height:72vh; display:flex; align-items:flex-end;
+/* ============ HERO (mobile-first: tekst høyt oppe, video + tall utfyller første skjerm) ============ */
+.hero { position:relative; width:100%; overflow:clip; color:#fff; min-height:56vh; display:flex; align-items:flex-start;
   background:linear-gradient(200deg, #0c1f33 0%, #14314a 60%, #95C11F 170%); }
 .hero::after {
   content:''; position:absolute; inset:0; z-index:1; pointer-events:none;
@@ -118,22 +118,22 @@ h1, h2, h3 { line-height: 1.2; }
 .hero-youtube { z-index:1; }
 
 /* Ken-Burns fjernet — video-hero brukes i stedet */
-.hero-content { position:relative; z-index:2; width:100%; max-width:1200px; margin-inline:auto; padding:clamp(3rem,8vh,5rem) clamp(1.25rem,5vw,2.5rem) clamp(2rem,6vh,3.5rem); }
-.hero h1 { margin:0 0 0.6rem; max-width:100%; font-size:clamp(1.5rem, 6vw, 3.2rem); font-weight:800; color:#fff; line-height:1.12; text-wrap:balance; text-shadow:0 2px 30px rgba(7,18,30,0.5); overflow-wrap:break-word; }
-.hero p.tagline { margin:0 0 1.8rem; max-width:100%; font-size:clamp(1rem,3.2vw,1.4rem); color:#e3eef5; font-weight:500; letter-spacing:0.005em; text-shadow:0 1px 20px rgba(7,18,30,0.5); }
+.hero-content { position:relative; z-index:2; width:100%; max-width:1200px; margin-inline:auto; padding:clamp(3.2rem, 10vh, 5rem) clamp(1.25rem,5vw,2.5rem) 1.4rem; }
+.hero h1 { margin:0 0 0.55rem; max-width:100%; font-size:clamp(1.5rem, 6vw, 3.2rem); font-weight:800; color:#fff; line-height:1.12; text-wrap:balance; text-shadow:0 2px 30px rgba(7,18,30,0.5); overflow-wrap:break-word; }
+.hero p.tagline { margin:0 0 1.4rem; max-width:100%; font-size:clamp(1rem,3.2vw,1.4rem); color:#e3eef5; font-weight:500; letter-spacing:0.005em; text-shadow:0 1px 20px rgba(7,18,30,0.5); }
 /* Myk, én-gang fade-in for hero-teksten (skjer ikke på nytt ved scroll) */
 .hero-content { animation:heroIn 1.1s ease-out both; }
 @keyframes heroIn { from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:none;} }
 @media (prefers-reduced-motion: reduce){ .hero-content { animation:none; } }
 
-/* ============ STATISTIKK-BANE ============ */
+/* ============ STATISTIKK-BANE (mobile: kompakt, utfyller sammen med hero første skjerm) ============ */
 .stats-band { width:100%; background:var(--navy); color:#fff; position:relative; overflow:clip; }
 .stats-band::before { content:''; position:absolute; inset:0; background:radial-gradient(80% 60% at 80% 20%, rgba(149,193,31,0.14), transparent 60%); }
-.stats-inner { width:100%; max-width:1200px; margin-inline:auto; padding:clamp(2rem,6vw,3.5rem) clamp(1.25rem,5vw,2.5rem); display:grid; gap:1.6rem; grid-template-columns:repeat(2,minmax(0,1fr)); position:relative; }
+.stats-inner { width:100%; max-width:1200px; margin-inline:auto; padding:clamp(1.4rem,5vw,2rem) clamp(1.25rem,5vw,2.5rem) clamp(1.8rem,6vw,2.6rem); display:grid; gap:1rem; grid-template-columns:repeat(2,minmax(0,1fr)); position:relative; }
 .stat { text-align:center; }
-.stat .num { font-size:clamp(2rem,7vw,3.2rem); font-weight:800; color:var(--green); line-height:1; }
-.stat .lbl { margin-top:0.45rem; font-size:0.82rem; color:#b9c9d6; text-transform:uppercase; letter-spacing:0.08em; }
-@media (min-width:768px){ .stats-inner { grid-template-columns:repeat(4,minmax(0,1fr)); } }
+.stat .num { font-size:clamp(1.7rem,7vw,2rem); font-weight:800; color:var(--green); line-height:1.1; }
+.stat .lbl { margin-top:0.3rem; font-size:0.72rem; color:#b9c9d6; text-transform:uppercase; letter-spacing:0.07em; }
+@media (min-width:768px){ .stats-inner { grid-template-columns:repeat(4,minmax(0,1fr)); gap:1.6rem; } }
 
 /* ============ LYSBOKS / VIDEO ============ */
 .lightbox { position:fixed; inset:0; z-index:100; display:grid; place-items:center; padding:1.25rem; background:rgba(8,23,38,0.94); opacity:0; visibility:hidden; transition:opacity .3s ease,visibility .3s; }
@@ -274,6 +274,13 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
 
 /* Tablet- og desktop: strammere og mer rett linse luft */
 @media (min-width:768px){
+  /* Desktop/tablet: hero-teksten tilbake nederst, høyere hero, større tall */
+  .hero { min-height:78vh; align-items:flex-end; }
+  .hero-content { padding:clamp(3rem,8vh,5rem) clamp(1.25rem,5vw,2.5rem) clamp(2rem,6vh,3.5rem); }
+  .stat .num { font-size:clamp(2rem,6vw,3rem); line-height:1; }
+  .stat .lbl { font-size:0.82rem; }
+  .stats-inner { padding:clamp(2rem,6vw,3.5rem) clamp(1.25rem,5vw,2.5rem); }
+
   section { padding-top: clamp(2.5rem, 4.2vw, 4rem); }
   .section-head { margin-bottom: 2rem; }
 
@@ -763,7 +770,7 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
           io.disconnect();
         }
       });
-    }, { threshold: 0.4 });
+    }, { threshold: 0.25 });
     io.observe(band);
   } else {
     run();
