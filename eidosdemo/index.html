@@ -373,12 +373,14 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
   <!-- ============ HERO — eksakt tekst fra forsiden ============ -->
   <section class="hero" aria-label="Forside">
     <div class="hero-media">
-      <!-- Slow-mo loop (lokal film, ingen YouTube-UI) av Fjordbyen — autoplay, muted, smooth. -->
+      <!-- Slow-mo loop (lokal film, ingen YouTube-UI) av Fjordbyen — 60fps, autoplay, muted, smooth. -->
       <div class="hero-youtube" aria-hidden="true">
         <video id="heroFilm" class="hero-film" autoplay muted loop playsinline
-          poster="assets/hero-slo-poster.jpg"
+          poster="assets/hero-slo-poster2.jpg"
           preload="metadata" tabindex="-1">
-          <source src="assets/hero_slo_720.webm" type="video/webm">
+          <source src="assets/hero_slo_mobile.webm" type="video/webm" media="(max-width:767px)">
+          <source src="assets/hero_slo_hd.webm" type="video/webm">
+          <source src="assets/hero_slo_hd.mp4" type="video/mp4">
         </video>
       </div>
       <!-- Fallback/bakgrunnsbilde hvis video ikke spiller -->
