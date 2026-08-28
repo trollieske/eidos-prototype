@@ -255,10 +255,15 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
 }
 /* ============ DESKTOP (1200px+) ============ */
 @media (min-width:1200px){
-  .hero { min-height:88vh; }
+  .hero { min-height:58vh; }
   .property-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
   .values { grid-template-columns:repeat(5,minmax(0,1fr)); }
   .lightbox-inner { max-width:1100px; }
+  .stats-inner { padding:clamp(2rem,5vw,3.2rem) clamp(1.25rem,5vw,2.5rem); }
+}
+/* Svært store skjermer: litt mer hero-høyde så tallene fortsatt fyller nær første skjerm */
+@media (min-width:1600px){
+  .hero { min-height:63vh; }
 }
 
 /* ============================ DESKTOP-RAFFINERING (≥768px, rører IKKE mobil) ============================
@@ -275,11 +280,11 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
 /* Tablet- og desktop: strammere og mer rett linse luft */
 @media (min-width:768px){
   /* Desktop/tablet: hero-teksten tilbake nederst, høyere hero, større tall */
-  .hero { min-height:78vh; align-items:flex-end; }
+  .hero { min-height:56vh; align-items:flex-end; }
   .hero-content { padding:clamp(3rem,8vh,5rem) clamp(1.25rem,5vw,2.5rem) clamp(2rem,6vh,3.5rem); }
   .stat .num { font-size:clamp(2rem,6vw,3rem); line-height:1; }
   .stat .lbl { font-size:0.82rem; }
-  .stats-inner { padding:clamp(2rem,6vw,3.5rem) clamp(1.25rem,5vw,2.5rem); }
+  .stats-inner { padding:clamp(1.8rem,4.5vw,2.8rem) clamp(1.25rem,5vw,2.5rem); }
 
   section { padding-top: clamp(2.5rem, 4.2vw, 4rem); }
   .section-head { margin-bottom: 2rem; }
