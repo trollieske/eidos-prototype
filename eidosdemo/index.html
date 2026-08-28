@@ -101,20 +101,18 @@ h1, h2, h3 { line-height: 1.2; }
 .hero-media { position:absolute; inset:0; z-index:0; }
 .hero-media picture, .hero-media img { display:block; }
 .hero-media img { width:100%; height:100%; object-fit:cover; opacity:0.42; }
-.hero-video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0.5; display:block; }
-/* Videoen ligger et lag over bilde-fallbacken; når den spiller maskserer den bildet, når den ikke gjør det vises bildet */
-.hero-media picture { z-index:0; }
-.hero-media video { z-index:1; }
-
-/* Ken-Burns på hero (kun desktop, subtilt; gir levende 'video'-følelse uten tung video) */
-@media (min-width:1024px){
-  @keyframes heroZoom {
-    0% { transform: scale(1.0) translateY(0); }
-    100% { transform: scale(1.08) translateY(-1.5%); }
-  }
-  .hero-media img { opacity:0.45; will-change:transform; animation: heroZoom 22s ease-in-out infinite alternate; }
-  @media (prefers-reduced-motion: reduce){ .hero-media img { animation:none; } }
+/* YouTube-bakgrunn: utfylt, center, slik at iframen dekker hele hero uten kanter */
+.hero-youtube { position:absolute; inset:-10% 0; height:120%; width:100%; pointer-events:none; opacity:0.78; overflow:hidden; }
+.hero-youtube iframe {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:177.78vh; /* 16:9 -> minst like høy som visning */
+  min-width:100%; min-height:100%; aspect-ratio:16/9; border:0;
 }
+/* Når videoen spiller, skjul bilde-fallbacken; ellers vis bildet */
+.hero-media picture { z-index:0; }
+.hero-youtube { z-index:1; }
+
+/* Ken-Burns fjernet — video-hero brukes i stedet */
 .hero-content { position:relative; z-index:2; width:100%; padding:clamp(3rem,8vh,5rem) clamp(1.25rem,5vw,2.5rem) clamp(2rem,6vh,3.5rem); }
 .hero h1 { margin:0 0 0.6rem; font-size:clamp(1.8rem,6.5vw,3.1rem); font-weight:800; color:#fff; line-height:1.15; text-wrap:balance; }
 .hero p.tagline { margin:0 0 1.6rem; font-size:clamp(1.1rem,3.8vw,1.5rem); color:#fff; font-weight:600; letter-spacing:0.02em; }
@@ -366,14 +364,17 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
   <!-- ============ HERO — eksakt tekst fra forsiden ============ -->
   <section class="hero" aria-label="Forside">
     <div class="hero-media">
-      <!-- Autoplay hero-video (lymp-fast: WebM ~0,5–1,3 MB). Teksten ligger over. -->
-      <video class="hero-video" autoplay muted loop playsinline
-        poster="assets/hero-poster.jpg"
-        aria-hidden="true" preload="metadata">
-        <source src="assets/hp_hero_hd.webm" type="video/webm" media="(min-width:768px)">
-        <source src="assets/hp_hero.webm" type="video/webm">
-      </video>
-      <!-- Fallback: bilde hvis video ikke støttes/avspilles ikke -->
+      <!-- Ekte Fjordstruktur-film (YouTube) som ambient-hero-bakgrunn: autoplay, muted, loop, kantet til passe. -->
+      <div class="hero-youtube" aria-hidden="true">
+        <iframe
+          id="heroFilm"
+          src="https://www.youtube.com/embed/N-lJDVlRCMw?autoplay=1&mute=1&loop=1&playlist=N-lJDVlRCMw&controls=0&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3&disablekb=1&showinfo=0"
+          title="Bakgrunnsfilm: Slik blir Fjordbyen Lier og Drammen"
+          allow="autoplay; encrypted-media; picture-in-picture"
+          frameborder="0" allowfullscreen
+          tabindex="-1"></iframe>
+      </div>
+      <!-- Fallback/heros bakgrunnsbildet hvis video enda iløpen (og som poster) -->
       <picture>
         <source type="image/avif" srcset="assets/hero-480.avif 480w, assets/hero-768.avif 768w, assets/hero-1280.avif 1280w, assets/hero-1920.avif 1920w" sizes="100vw">
         <source type="image/webp" srcset="assets/hero-480.webp 480w, assets/hero-768.webp 768w, assets/hero-1280.webp 1280w, assets/hero-1920.webp 1920w" sizes="100vw">
@@ -745,12 +746,6 @@ section { width:100%; padding-top:clamp(3rem,9vw,5rem); }
   var mo = ('MutationObserver' in window) ? new MutationObserver(function () { scan(); }) : null;
   scan();
   if (mo) mo.observe(document.body, { childList: true, subtree: true });
-
-  var t = null;
-  window.addEventListener('scroll', function () {
-    if (t) clearTimeout(t);
-    t = setTimeout(scan, 150);
-  }, { passive: true });
 })();
 
 
